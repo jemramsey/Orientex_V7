@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "567908063521",
+    "project_id": "orientex-v7",
+    "storage_bucket": "orientex-v7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:567908063521:android:6f3a234f508c2e9b044660",
+        "android_client_info": {
+          "package_name": "com.example.orientex_v7"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "567908063521-1kcrt2vmhlgk6n0l96fck0gaqnpfgnne.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.orientex_v7",
+            "certificate_hash": "fc3f5cb938f4a6c70756685ea116f240dd318256"
+          }
+        },
+        {
+          "client_id": "567908063521-vp6bj27dqhijk03vn25rto445ap46u1u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHkcjthp9m1KUXjmDMLIZzYaZsYJKxMtw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "567908063521-vp6bj27dqhijk03vn25rto445ap46u1u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
