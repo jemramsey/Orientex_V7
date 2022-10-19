@@ -6,6 +6,7 @@ import android.content.IntentSender
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -16,6 +17,9 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 class MainActivity : AppCompatActivity() {
 
@@ -63,6 +67,10 @@ class MainActivity : AppCompatActivity() {
             }
 
         auth = Firebase.auth
+
+        findViewById<Button>(R.id.button).setOnClickListener {
+            signIn()
+        }
 
     }
 
@@ -133,6 +141,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    fun signIn() {
+        val signInIntent = Intent(this@MainActivity, MainActivity::class.java)
+        startActivityForResult(signInIntent, REQ_ONE_TAP)
     }
 
     private fun updateUI(user: FirebaseUser?) {
