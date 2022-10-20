@@ -146,6 +146,9 @@ class MainActivity : AppCompatActivity() {
     fun signIn() {
         val signInIntent = Intent(this@MainActivity, MainActivity::class.java)
         startActivityForResult(signInIntent, REQ_ONE_TAP)
+
+        val intent = Intent(this, MainActivity::class.java)
+        startActivityForResult(intent, REQ_ONE_TAP)
     }
 
     private fun updateUI(user: FirebaseUser?) {
