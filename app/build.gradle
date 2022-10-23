@@ -8,13 +8,17 @@ android {
     namespace 'com.example.orientex_v7'
     compileSdk 32
 
+//    buildFeature {
+//        viewBinding = true
+//        dataBinding = true
+//    }
+
     defaultConfig {
         applicationId "com.example.orientex_v7"
         minSdk 26
         targetSdk 32
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -31,6 +35,15 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    viewBinding {
+        enabled = true
+    }
+
+    dataBinding{
+        enabled = true
+    }
+
 }
 
 dependencies {
