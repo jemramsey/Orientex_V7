@@ -32,8 +32,9 @@ class MainActivity : AppCompatActivity() {
                     // Got an ID token from Google. Use it to authenticate
                     // with your backend.
                     val msg = "idToken: $idToken"
+                    updateUi(idToken)
                     Snackbar.make(binding.root, msg, Snackbar.LENGTH_INDEFINITE).show()
-                    Log.d("one tap", msg)
+                   // Log.d("one tap", msg)
                 }
                 else -> {
                     // Shouldn't happen.
@@ -129,5 +130,10 @@ class MainActivity : AppCompatActivity() {
                 Log.d("btn click", e.localizedMessage!!)
             }
     }
+
+    private fun updateUi(token: String?) {
+        Log.i("AUTHCHECK", "$token")
+    }
+
 
 }
