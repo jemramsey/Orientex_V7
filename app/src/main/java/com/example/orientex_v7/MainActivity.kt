@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
                     // Your server's client ID, not your Android client ID.
-                    .setServerClientId("567908063521-vp6bj27dqhijk03vn25rto445ap46u1u.apps.googleusercontent.com")
+                    .setServerClientId(getString(R.string.your_web_client_id))
                     // Show all accounts on the device.
                     .setFilterByAuthorizedAccounts(false)
                     .build())
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
                     // Your server's client ID, not your Android client ID.
-                    .setServerClientId("567908063521-vp6bj27dqhijk03vn25rto445ap46u1u.apps.googleusercontent.com")
+                    .setServerClientId(getString(R.string.your_web_client_id))
                     // Show all accounts on the device.
                     .setFilterByAuthorizedAccounts(true)
                     .build())

@@ -4,6 +4,6 @@
     <string name="signin_button">Sign In</string>
     <string name="title_activity_logged_in_view">Logged_In_View</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_quests">Quests</string>
+    <string name="title_profile">Profile</string>
 </resources>
