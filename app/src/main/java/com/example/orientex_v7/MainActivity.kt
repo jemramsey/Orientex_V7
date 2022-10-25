@@ -1,5 +1,6 @@
 package com.example.orientex_v7
 
+import android.content.Intent
 import android.content.IntentSender
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -146,6 +147,8 @@ class MainActivity : AppCompatActivity() {
         auth.signInWithCredential(firebaseCredential)
         val user = auth.currentUser
         Log.i("AUTHCHECK", user.toString())
+
+        startActivity(Intent(this@MainActivity, Logged_In_View::class.java))
     }
 
 
