@@ -6,4 +6,10 @@
     <string name="title_home">Home</string>
     <string name="title_quests">Quests</string>
     <string name="title_profile">Profile</string>
+
+    <string name="quest1_button">Start Quest!</string>
+    <string name="quest1_text">Welcome to Orientex!</string>
+
+    <string name="quest_2_title">Quest 2: Classroom 349</string>
+    <string name="quest_2_text">lorem ipsem</string>
 </resources>

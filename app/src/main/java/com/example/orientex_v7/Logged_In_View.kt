@@ -3,11 +3,15 @@ package com.example.orientex_v7
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.orientex_v7.databinding.ActivityLoggedInViewBinding
+import com.example.orientex_v7.ui.home.HomeFragment
+import kotlin.concurrent.fixedRateTimer
 
 class Logged_In_View : AppCompatActivity() {
 
