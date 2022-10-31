@@ -151,5 +151,4 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this@MainActivity, Logged_In_View::class.java))
     }
 
-
 }
