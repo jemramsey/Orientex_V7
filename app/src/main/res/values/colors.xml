@@ -7,4 +7,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="uwf_blue">#004c97</color>
+    <color name="uwf_green">#007A33</color>
+    <color name="nautilus_blue">#009cde</color>
+    <color name="luna_blue">#8dc8e8</color>
 </resources>

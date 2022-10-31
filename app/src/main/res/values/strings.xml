@@ -1,5 +1,9 @@
 <resources>
-    <string name="app_name">Orientex_V7</string>
+    <string name="app_name">Orientex</string>
     <string name="your_web_client_id">567908063521-vp6bj27dqhijk03vn25rto445ap46u1u.apps.googleusercontent.com</string>
     <string name="signin_button">Sign In</string>
+    <string name="title_activity_logged_in_view">Logged_In_View</string>
+    <string name="title_home">Home</string>
+    <string name="title_quests">Quests</string>
+    <string name="title_profile">Profile</string>
 </resources>
