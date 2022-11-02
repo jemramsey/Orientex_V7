@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".QuestList">
+
+    <ImageView
+        android:id="@+id/quest4Check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/quest4Title"
+        app:layout_constraintEnd_toEndOf="@id/middleLine"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@id/boxLine"
+        app:layout_constraintTop_toTopOf="@id/quest4Title"
+        app:srcCompat="@android:drawable/checkbox_on_background" />
+
+    <ImageView
+        android:id="@+id/quest3Check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/quest3Title"
+        app:layout_constraintEnd_toStartOf="@id/middleLine"
+        app:layout_constraintStart_toStartOf="@id/boxLine"
+        app:layout_constraintTop_toTopOf="@id/quest3Title"
+        app:srcCompat="@android:drawable/checkbox_off_background" />
+
+    <ImageView
+        android:id="@+id/quest2Check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/quest2Title"
+        app:layout_constraintEnd_toStartOf="@id/middleLine"
+        app:layout_constraintStart_toStartOf="@id/boxLine"
+        app:layout_constraintTop_toTopOf="@id/quest2Title"
+        app:srcCompat="@android:drawable/checkbox_off_background" />
+
+    <TextView
+        android:id="@+id/introTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/introTitle"
+        app:layout_constraintBottom_toTopOf="@+id/quest1Title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/middleLine"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/quest1Title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/quest1Title"
+        app:layout_constraintBottom_toTopOf="@id/quest2Title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/middleLine"
+        app:layout_constraintTop_toBottomOf="@id/introTitle" />
+
+    <ImageView
+        android:id="@+id/quest1Check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/quest1Title"
+        app:layout_constraintEnd_toStartOf="@id/middleLine"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@id/boxLine"
+        app:layout_constraintTop_toTopOf="@id/quest1Title"
+        app:srcCompat="@android:drawable/checkbox_off_background" />
+
+    <TextView
+        android:id="@+id/quest2Title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/quest2Title"
+        app:layout_constraintBottom_toTopOf="@id/quest3Title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/middleLine"
+        app:layout_constraintTop_toBottomOf="@id/quest1Title"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/quest3Title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/quest3Title"
+        app:layout_constraintBottom_toTopOf="@id/quest4Title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.555"
+        app:layout_constraintStart_toStartOf="@id/middleLine"
+        app:layout_constraintTop_toBottomOf="@id/quest2Title"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/quest4Title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/quest4Title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/middleLine"
+        app:layout_constraintTop_toBottomOf="@id/quest3Title"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/introCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/introTitle"
+        app:layout_constraintEnd_toStartOf="@id/middleLine"
+        app:layout_constraintStart_toStartOf="@id/boxLine"
+        app:layout_constraintTop_toTopOf="@id/introTitle"
+        app:srcCompat="@android:drawable/checkbox_off_background" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/boxLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/middleLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="116dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

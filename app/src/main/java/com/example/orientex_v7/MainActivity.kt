@@ -146,9 +146,11 @@ class MainActivity : AppCompatActivity() {
         val firebaseCredential = GoogleAuthProvider.getCredential(token, null)
         auth.signInWithCredential(firebaseCredential)
         val user = auth.currentUser
-        Log.i("AUTHCHECK", user.toString())
+        if (user != null) {
+            Log.i("AUTHCHECK", user.email.toString())
+        }
 
-        startActivity(Intent(this@MainActivity, Logged_In_View::class.java))
+        startActivity(Intent(this@MainActivity, CurrentQuest::class.java))
     }
 
 }

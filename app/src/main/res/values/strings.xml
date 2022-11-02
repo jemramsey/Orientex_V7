@@ -6,4 +6,21 @@
     <string name="title_home">Home</string>
     <string name="title_quests">Quests</string>
     <string name="title_profile">Profile</string>
+    <string name="continueButton">Continue</string>
+
+    <!-- Quest Information (from database later) -->
+    <string name="introTitle">Introduction: Orientex</string>
+    <string name="introDesc">Welcome to UWF! \n\nWe\'ll be your guide to student orientation. \n\nPlease click the button below to continue</string>
+    <string name="quest1Title">Quest 1: HMCSE - Building 4</string>
+    <string name="quest1Desc">This is building 4, the Hal Marcus Computer Science and Engineering building.\n\nThis will be our focus for this application.\n\nPlease click the button below to proceed.</string>
+    <string name="quest2Title">Quest 2: Dr. OK\'s Office (Room 435)</string>
+    <string name="quest2Desc">Next is the office of Dr. Bernd Owsnicki-Klewe, otherwise known as Dr. OK. He is the professor for several courses including the Capstone course for Fall 2022.\n\nPlease make your way to the fourth floor to scan the QR Code for his office\n\nPlease click the button when you wish to continue.</string>
+    <string name="quest3Title">Quest 3: Classroom 349</string>
+    <string name="quest3Desc">Make your way down to the third floor to find your classroom. \n\nThis is classroom 349, used by several professors for many courses, including the Capstone course for Fall 2022. \n\nPlease click the button and scan the QR code by the door to continue on your quest.</string>
+    <string name="quest4Title">Quest 4: Orientation Quiz</string>
+    <string name="quest4Desc">Now that you\'ve finished your orientation, please click the button below to take the quiz to complete your orientation quest.</string>
+
+    <!-- Questions for quiz -->
+    <string name="question1">1. What is the name of the building?</string>
+
 </resources>
