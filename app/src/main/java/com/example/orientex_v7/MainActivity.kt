@@ -15,6 +15,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
@@ -138,6 +139,12 @@ class MainActivity : AppCompatActivity() {
                 displaySignUp()
                 Log.d("btn click", e.localizedMessage!!)
             }
+    }
+
+    fun getUser(): FirebaseUser? {
+
+        if(auth.currentUser != null) {return auth.currentUser}
+        else { return null }
     }
 
     private fun updateUi(token: String?) {
