@@ -155,9 +155,14 @@ class MainActivity : AppCompatActivity() {
         val user = auth.currentUser
         if (user != null) {
             Log.i("AUTHCHECK", user.email.toString())
-        }
+            val email = user.email.toString()
 
-        startActivity(Intent(this@MainActivity, CurrentQuest::class.java))
+            Log.i("AUTHCHECK-Email", email)
+
+            val intent = Intent(this@MainActivity, CurrentQuest::class.java)
+            intent.putExtra("User", email)
+            startActivity(intent)
+        }
     }
 
 }

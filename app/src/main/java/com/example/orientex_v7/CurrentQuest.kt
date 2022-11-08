@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Layout
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
@@ -16,7 +17,7 @@ class CurrentQuest : AppCompatActivity() {
 
     private var currQuest = 0
     private val main = MainActivity()
-    //private val currentUser = main.getUser()
+    private lateinit var currentUser: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +25,9 @@ class CurrentQuest : AppCompatActivity() {
 
         //TODO: set to user's current quest
         //currQuest = 0
+        currentUser = intent.getStringExtra("User").toString()
 
+        Log.d("EMAILCHECK", currentUser)
 
         //TODO: Get it so that the image, title, and desc. update to the current quest's info
         val quest_button = findViewById<Button>(R.id.questButton)
