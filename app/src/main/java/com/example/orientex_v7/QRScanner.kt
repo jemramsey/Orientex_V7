@@ -1,5 +1,6 @@
 package com.example.orientex_v7
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -16,7 +17,7 @@ import com.budiyev.android.codescanner.ScanMode
 class QRScanner : AppCompatActivity() {
 
     private lateinit var codescanner : CodeScanner
-    private lateinit var code: String
+    private var code = "NO_CODE"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +47,10 @@ class QRScanner : AppCompatActivity() {
             runOnUiThread {
                 Toast.makeText(this, "Scan Result: ${it.text}", Toast.LENGTH_SHORT).show()
                 code = it.text
+
+                val intent = Intent(this@QRScanner, CurrentQuest::class.java)
+                intent.putExtra("QRCode", code)
+                startActivity(intent)
             }
         }
 
