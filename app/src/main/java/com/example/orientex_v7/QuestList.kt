@@ -1,22 +1,52 @@
 package com.example.orientex_v7
 
+import android.content.Intent
+import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
 
 class QuestList : AppCompatActivity() {
 
     //size based on # of quests available
-    private val quests = BooleanArray(5)
+    private val size = 5
+    private var quests = BooleanArray(size)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quest_list)
 
-        //TODO: when user is logged in, pull what they do / don't have in order to set the pic as needed
+        //TODO: pull from database what is and isn't completed
 
+        val curQuest = intent.getIntExtra("currentQuest", 0)
+        //currentUser = intent.getStringExtra("User").toString()
+        if(curQuest < 1) {
+            for (i in 0 until size) { quests[i] = false }
+            Log.d("QUESTSETTER", quests.toString())
+        }
 
+        for(i in 0 until size) { updateImage(i) }
+    }
+
+    private fun updateImage(quest: Int) {
+        val id: Int = when (quest) {
+            0 -> R.id.introCheck
+            1 -> R.id.quest1Check
+            2 -> R.id.quest2Check
+            3 -> R.id.quest3Check
+            4 -> R.id.quest4Check
+            else -> -1
+        }
+        val image = findViewById<ImageView>(id)
+        val on = android.R.drawable.checkbox_on_background
+        val off = android.R.drawable.checkbox_off_background
+
+        if(quests[quest]) { image.setImageResource(on) }
+        else { image.setImageResource(off) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -26,13 +56,10 @@ class QuestList : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
 
         when(item.itemId) {
-            R.id.navigation_home -> setContentView(R.layout.activity_current_quest)
-            R.id.navigation_quests -> setContentView(R.layout.activity_quest_list)
+            R.id.navigation_home -> startActivity(Intent(this@QuestList, CurrentQuest::class.java))
+            R.id.navigation_profile -> startActivity(Intent(this@QuestList, Profile::class.java))
         }
 
         return when (item.itemId) {

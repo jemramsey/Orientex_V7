@@ -16,11 +16,13 @@ import com.google.firebase.auth.FirebaseUser
 class CurrentQuest : AppCompatActivity() {
     companion object {
         var currQuest = 0
+
+        //this is the email of the user
+        private lateinit var currentUser: String
+        fun getUser(): String { return currentUser }
     }
 
     //private var currQuest = 0
-    private val main = MainActivity()
-    private lateinit var currentUser: String
     private lateinit var qrCode: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,10 +31,9 @@ class CurrentQuest : AppCompatActivity() {
         currentUser = intent.getStringExtra("User").toString()
         qrCode = intent.getStringExtra("QRCode").toString()
 
-        Log.d("QRCODE", qrCode)
-
-        //TODO: set to user's current quest & fix view to match
         setContentView(R.layout.activity_current_quest)
+
+        //TODO: set to user's current quest via database (using currentUser)
         //currQuest = 0
 
         //when launched, if current quest is 2 or 3, set currQuest-- & call nextQuest()
@@ -41,22 +42,13 @@ class CurrentQuest : AppCompatActivity() {
             currQuest--
             nextQuest()
 
-            if(qrCode != null && qrCode != "NO_CODE" && checkCode(qrCode)) {
+            if(qrCode != "NO_CODE" && checkCode(qrCode)) {
                 nextQuest()
             }
         }
 
-
-
-
-
-
-        Log.d("EMAILCHECK", currentUser)
-
-        //TODO: Get it so that the image, title, and desc. update to the current quest's info
-        val quest_button = findViewById<Button>(R.id.questButton)
-
-        quest_button.setOnClickListener {
+        val questButton = findViewById<Button>(R.id.questButton)
+        questButton.setOnClickListener {
             when(currQuest) {
                 0 -> nextQuest()
                 1 -> nextQuest()
@@ -98,7 +90,12 @@ class CurrentQuest : AppCompatActivity() {
                 image.setImageResource(R.drawable.office_tag)
                 desc.text = getString(R.string.quest3Desc)
             }
-            //4 -> { startActivity(Quiz) }
+            4 -> { startActivity(Intent(this@CurrentQuest, Quiz::class.java)) }
+            5 -> {
+                title.text = getString(R.string.congratsTitle)
+                //image.setImageResource(android.R.drawable.) //set this to some sort of celebratory picture
+                desc.text = getString(R.string.congratsDesc)
+            }
         }
 
     }
@@ -131,8 +128,12 @@ class CurrentQuest : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.navigation_home -> setContentView(R.layout.activity_current_quest)
-            R.id.navigation_quests -> setContentView(R.layout.activity_quest_list)
+            R.id.navigation_quests -> {
+                val intent = Intent(this@CurrentQuest, QuestList::class.java)
+                intent.putExtra("currentQuest", currQuest)
+                startActivity(intent)
+            }
+            R.id.navigation_profile -> startActivity(Intent(this@CurrentQuest, Profile::class.java))
         }
 
         return when (item.itemId) {

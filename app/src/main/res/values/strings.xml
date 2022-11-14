@@ -19,8 +19,34 @@
     <string name="quest3Desc">Make your way down to the third floor. \n\nThis is classroom 349, used by several professors for many courses.\n\nPlease click the button and scan the QR code to continue on your quest.</string>
     <string name="quest4Title">Quest 4: Orientation Quiz</string>
     <string name="quest4Desc">Now that you\'ve finished your orientation, please click the button below to take the quiz to complete your orientation quest.</string>
+    <string name="congratsTitle">Congratulations!</string>
+    <string name="congratsDesc">You\'ve completed orientation!</string>
+
+    <!-- Profile Info -->
+    <string name="completedTitle">Quests Completed:</string>
+    <string name="completedTextDefault">0</string>
+    <string name="defaultEmail">default@students.uwf.edu</string>
 
     <!-- Questions for quiz -->
+    <string name="quizTitle">Quest 4: Quiz</string>
+    <string name="quizButton">Submit</string>
+
     <string name="question1">1. What is the name of the building?</string>
+    <string name="q1_answer1">Campus Green</string>
+    <string name="q1_answer2">Hal Marcus Computer Science and Engineering</string>
+    <string name="q1_answer3">I/O &amp; Circuits</string>
+    <string name="q1_answer4">Computer Science and Circuitry</string>
+
+    <string name="question2">2. What floor is Dr. OK\'s office on?</string>
+    <string name="q2_answer1">First</string>
+    <string name="q2_answer2">Second</string>
+    <string name="q2_answer3">Third</string>
+    <string name="q2_answer4">Fourth</string>
+
+    <string name="question3">3. What is the number of the classroom?</string>
+    <string name="q3_answer1">349</string>
+    <string name="q3_answer2">242</string>
+    <string name="q3_answer3">320</string>
+    <string name="q3_answer4">122</string>
 
 </resources>
