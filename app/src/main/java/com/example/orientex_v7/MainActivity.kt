@@ -153,12 +153,6 @@ class MainActivity : AppCompatActivity() {
     private fun updateUi(token: String?) {
         Log.i("AUTHCHECK", "$token")
 
-        val testUser = hashMapOf(
-            "ID" to "Smedley",
-            "Name" to "Smedley Butler",
-            "Email" to "SmedleyButler@yourmom.com",
-            "Quest Completed" to 1
-        )
 
         val firebaseCredential = GoogleAuthProvider.getCredential(token, null)
         auth.signInWithCredential(firebaseCredential)
@@ -168,22 +162,43 @@ class MainActivity : AppCompatActivity() {
             val email = user.email.toString()
             val name = user.displayName.toString()
 
+            val userData = hashMapOf(
+                "ID" to email,
+                "Name" to name,
+                "Email" to email,
+                "Quest Completed" to 0
+            )
+
             Log.i("AUTHCHECK-Email", email)
             Log.i("AUTHCHECK-Name", name)
 
             val intent = Intent(this@MainActivity, CurrentQuest::class.java)
             intent.putExtra("User", email)
+            var userExists = false
+
+            db.collection("Users")
+                .whereEqualTo("Email", email)
+                .get()
+                .addOnSuccessListener { result ->
+                    for(document in result){
+                        userExists = true
+                    }
+                }
+
+            if(!userExists) {
+                db.collection("Users")
+                    .add(userData)
+                    .addOnSuccessListener { documentReference ->
+                        Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error adding document", e)
+                    }
+            }
             startActivity(intent)
         }
 
-        db.collection("Users")
-            .add(testUser)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
-            }
+
     }
 
 }
