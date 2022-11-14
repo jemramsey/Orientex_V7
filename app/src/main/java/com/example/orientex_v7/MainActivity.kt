@@ -1,5 +1,6 @@
 package com.example.orientex_v7
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.IntentSender
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +20,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
@@ -30,8 +32,9 @@ class MainActivity : AppCompatActivity() {
     private var signUpRequest: BeginSignInRequest? = null
     private var signInRequest: BeginSignInRequest? = null
     private lateinit var auth: FirebaseAuth
+    val db = Firebase.firestore
 
-    private val oneTapResult = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()){ result ->
+       private val oneTapResult = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()){ result ->
         try {
             val credential = oneTapClient?.getSignInCredentialFromIntent(result.data)
             val idToken = credential?.googleIdToken
@@ -150,19 +153,37 @@ class MainActivity : AppCompatActivity() {
     private fun updateUi(token: String?) {
         Log.i("AUTHCHECK", "$token")
 
+        val testUser = hashMapOf(
+            "ID" to "Smedley",
+            "Name" to "Smedley Butler",
+            "Email" to "SmedleyButler@yourmom.com",
+            "Quest Completed" to 1
+        )
+
         val firebaseCredential = GoogleAuthProvider.getCredential(token, null)
         auth.signInWithCredential(firebaseCredential)
         val user = auth.currentUser
         if (user != null) {
             Log.i("AUTHCHECK", user.email.toString())
             val email = user.email.toString()
+            val name = user.displayName.toString()
 
             Log.i("AUTHCHECK-Email", email)
+            Log.i("AUTHCHECK-Name", name)
 
             val intent = Intent(this@MainActivity, CurrentQuest::class.java)
             intent.putExtra("User", email)
             startActivity(intent)
         }
+
+        db.collection("Users")
+            .add(testUser)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
     }
 
 }
