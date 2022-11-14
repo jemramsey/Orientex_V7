@@ -180,12 +180,14 @@ class MainActivity : AppCompatActivity() {
                 .whereEqualTo("Email", email)
                 .get()
                 .addOnSuccessListener { result ->
-                    for(document in result){
+                    if(result != null){
                         userExists = true
                     }
+                    Log.i("AUTHCHECK-exists", userExists.toString())
                 }
 
             if(!userExists) {
+                Log.i("AUTHCHECK-exists", "Inside no user " + userExists.toString() )
                 db.collection("Users")
                     .add(userData)
                     .addOnSuccessListener { documentReference ->
