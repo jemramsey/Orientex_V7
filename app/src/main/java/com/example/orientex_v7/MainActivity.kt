@@ -20,8 +20,14 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -172,35 +178,42 @@ class MainActivity : AppCompatActivity() {
             Log.i("AUTHCHECK-Email", email)
             Log.i("AUTHCHECK-Name", name)
 
-            val intent = Intent(this@MainActivity, CurrentQuest::class.java)
-            intent.putExtra("User", email)
-            var userExists = false
-
-            db.collection("Users")
-                .whereEqualTo("Email", email)
-                .get()
-                .addOnSuccessListener { result ->
-                    if(result != null){
-                        userExists = true
-                    }
-                    Log.i("AUTHCHECK-exists", userExists.toString())
-                }
-
-            if(!userExists) {
-                Log.i("AUTHCHECK-exists", "Inside no user " + userExists.toString() )
-                db.collection("Users")
+            GlobalScope.launch(Dispatchers.IO) {
+                val answer1 = async {query(email)}
+                val answer2 = async {db.collection("Users")
                     .add(userData)
                     .addOnSuccessListener { documentReference ->
                         Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
                     }
                     .addOnFailureListener { e ->
                         Log.w(TAG, "Error adding document", e)
-                    }
+                    }}
             }
+
+            val intent = Intent(this@MainActivity, CurrentQuest::class.java)
+            intent.putExtra("User", email)
+
             startActivity(intent)
         }
 
 
+    }
+
+    suspend fun query(email: String) : Boolean{
+        var userExists = false
+
+        Log.i("AUTHCHECK-exists", "1. $email")
+
+        db.collection("Users")
+            .whereEqualTo("Email", email)
+            .get()
+            .addOnSuccessListener { result ->
+                Log.i("AUTHCHECK-exists", result.documents.toString())
+                userExists = true
+                }
+
+        Log.i("AUTHCHECK-exists", userExists.toString())
+        return userExists
     }
 
 }
