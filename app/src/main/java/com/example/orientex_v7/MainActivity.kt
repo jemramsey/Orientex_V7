@@ -27,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -210,7 +211,8 @@ class MainActivity : AppCompatActivity() {
             .addOnSuccessListener { result ->
                 Log.i("AUTHCHECK-exists", result.documents.toString())
                 userExists = true
-                }
+                }.await()
+
 
         Log.i("AUTHCHECK-exists", userExists.toString())
         return userExists
