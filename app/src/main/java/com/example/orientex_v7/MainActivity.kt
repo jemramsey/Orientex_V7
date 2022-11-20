@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
                     // Got an ID token from Google. Use it to authenticate
                     // with your backend.
                     val msg = "idToken: $idToken"
-                    updateUi(idToken)
+                    authenticateWithFirebase(idToken)
                     Snackbar.make(binding.root, msg, Snackbar.LENGTH_INDEFINITE).show()
                    // Log.d("one tap", msg)
                 }
@@ -157,7 +157,47 @@ class MainActivity : AppCompatActivity() {
         else { return null }
     }
 
-    private fun updateUi(token: String?) {
+    private fun updateUi(email : String) {
+//        Log.i("AUTHCHECK", "$token")
+//
+//
+//        val firebaseCredential = GoogleAuthProvider.getCredential(token, null)
+//        auth.signInWithCredential(firebaseCredential)
+//        val user = auth.currentUser
+//        if (user != null) {
+//            Log.i("AUTHCHECK", user.email.toString())
+//            val email = user.email.toString()
+//            val name = user.displayName.toString()
+
+//            val userData = hashMapOf(
+//                "ID" to email,
+//                "Name" to name,
+//                "Email" to email,
+//                "Quest Completed" to 0
+//            )
+
+//            Log.i("AUTHCHECK-Email", email)
+//            Log.i("AUTHCHECK-Name", name)
+
+//            GlobalScope.launch(Dispatchers.IO) {
+//                val answer1 = async {query(email)}
+//                val answer2 = async {db.collection("Users")
+//                    .add(userData)
+//                    .addOnSuccessListener { documentReference ->
+//                        Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+//                    }
+//                    .addOnFailureListener { e ->
+//                        Log.w(TAG, "Error adding document", e)
+//                    }}
+//            }
+
+            val intent = Intent(this@MainActivity, CurrentQuest::class.java)
+            intent.putExtra("User", email)
+
+            startActivity(intent)
+        }
+
+    private fun authenticateWithFirebase(token: String?) {
         Log.i("AUTHCHECK", "$token")
 
 
@@ -168,40 +208,11 @@ class MainActivity : AppCompatActivity() {
             Log.i("AUTHCHECK", user.email.toString())
             val email = user.email.toString()
             val name = user.displayName.toString()
-
-            val userData = hashMapOf(
-                "ID" to email,
-                "Name" to name,
-                "Email" to email,
-                "Quest Completed" to 0
-            )
-
-            Log.i("AUTHCHECK-Email", email)
-            Log.i("AUTHCHECK-Name", name)
-
-            GlobalScope.launch(Dispatchers.IO) {
-                val answer1 = async {query(email)}
-                val answer2 = async {db.collection("Users")
-                    .add(userData)
-                    .addOnSuccessListener { documentReference ->
-                        Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w(TAG, "Error adding document", e)
-                    }}
-            }
-
-            val intent = Intent(this@MainActivity, CurrentQuest::class.java)
-            intent.putExtra("User", email)
-
-            startActivity(intent)
+            userQuery(name, email)
         }
-
-
     }
 
-    suspend fun query(email: String) : Boolean{
-        var userExists = false
+    fun userQuery(name: String , email: String) {
 
         Log.i("AUTHCHECK-exists", "1. $email")
 
@@ -210,12 +221,32 @@ class MainActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { result ->
                 Log.i("AUTHCHECK-exists", result.documents.toString())
-                userExists = true
-                }.await()
+                updateUi(email)
+            }
+            .addOnFailureListener { result ->
+                Log.i("AUTHCHECK-exists", "User does not exist")
+                addUser(name, email)
+            }
+    }
 
+    fun addUser(name :String, email: String) {
 
-        Log.i("AUTHCHECK-exists", userExists.toString())
-        return userExists
+        val userData = hashMapOf(
+            "ID" to email,
+            "Name" to name,
+            "Email" to email,
+            "Quest Completed" to 0
+        )
+
+        db.collection("Users")
+            .add(userData)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                updateUi(email)
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
     }
 
 }
