@@ -23,12 +23,10 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
 import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     private var signInRequest: BeginSignInRequest? = null
     private lateinit var auth: FirebaseAuth
     val db = Firebase.firestore
+    var _userExists = false;
 
        private val oneTapResult = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()){ result ->
         try {
@@ -169,26 +168,16 @@ class MainActivity : AppCompatActivity() {
             val email = user.email.toString()
             val name = user.displayName.toString()
 
-            val userData = hashMapOf(
-                "ID" to email,
-                "Name" to name,
-                "Email" to email,
-                "Quest Completed" to 0
-            )
+            GlobalScope.launch {
+                val query = userQuery(email)
 
-            Log.i("AUTHCHECK-Email", email)
-            Log.i("AUTHCHECK-Name", name)
+                val queryResult = query.await()
 
-            GlobalScope.launch(Dispatchers.IO) {
-                val answer1 = async {query(email)}
-                val answer2 = async {db.collection("Users")
-                    .add(userData)
-                    .addOnSuccessListener { documentReference ->
-                        Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w(TAG, "Error adding document", e)
-                    }}
+
+                //TODO need proper use of queryResult for conditional
+                if (!_userExists) {
+                    addUser(email, name);
+                }
             }
 
             val intent = Intent(this@MainActivity, CurrentQuest::class.java)
@@ -200,8 +189,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    suspend fun query(email: String) : Boolean{
-        var userExists = false
+   fun userQuery(email: String) = GlobalScope.async {
+       var  value = false;
 
         Log.i("AUTHCHECK-exists", "1. $email")
 
@@ -210,12 +199,42 @@ class MainActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { result ->
                 Log.i("AUTHCHECK-exists", result.documents.toString())
-                userExists = true
-                }.await()
+                setActiveUserStatus("Success")
+                value = true;
+            }
+            .addOnFailureListener {e ->
+                Log.w("AUTHCHECK-not present", e)
+                setActiveUserStatus("Failure")
+                value = false;
+            }
+   }
 
+     fun addUser (email: String, name: String ) {
 
-        Log.i("AUTHCHECK-exists", userExists.toString())
-        return userExists
+            val userData = hashMapOf(
+                "ID" to email,
+                "Name" to name,
+                "Email" to email,
+                "Quest Completed" to 0
+            )
+
+            Log.i("AUTHCHECK-Email", email)
+            Log.i("AUTHCHECK-Name", name)
+
+            db.collection("Users")
+                .add(userData)
+                .addOnSuccessListener { documentReference ->
+                    Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                }
+                .addOnFailureListener {e ->
+                    Log.w(TAG, "Error adding document", e)
+                }
+        }
+
+    fun setActiveUserStatus(msg:String) {
+        if (msg.equals("Success")) {
+            _userExists = true;
+        }
     }
 
 }
