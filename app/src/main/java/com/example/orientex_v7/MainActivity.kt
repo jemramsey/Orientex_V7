@@ -247,7 +247,7 @@ class MainActivity : AppCompatActivity() {
             .add(userData)
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-                updateUi(email)
+//                updateUi(email)
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error adding document", e)
