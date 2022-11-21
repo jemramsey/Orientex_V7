@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.IntentSender
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings.Global
 import com.example.orientex_v7.databinding.ActivityMainBinding
 import android.util.Log
 import androidx.activity.result.IntentSenderRequest
@@ -252,6 +253,17 @@ class MainActivity : AppCompatActivity() {
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error adding document", e)
             }
+    }
+
+    //TODO query and update Quests Completed in DB
+    private fun updateQuestsCompleted(currentQuest : Int, email : String) = GlobalScope.async {
+        db.collection("Users")
+            .document(email)
+            .update("Quest Completed", currentQuest)
+    }
+
+    private fun queryQuestsCompleted(user: String) = GlobalScope.async {
+        db.collection("Users")
     }
 
 }
