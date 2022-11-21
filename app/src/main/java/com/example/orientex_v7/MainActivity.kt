@@ -223,11 +223,14 @@ class MainActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { result ->
                 Log.i("AUTHCHECK-exists", result.documents.toString())
+                if(result.documents.isEmpty())
+                {
+                    addUser(name, email)
+                }
                 updateUi(email)
             }
             .addOnFailureListener { result ->
-                Log.i("AUTHCHECK-exists", "User does not exist")
-                addUser(name, email)
+                Log.i("AUTHCHECK-exists", "Cannot query DB")
             }
     }
 
