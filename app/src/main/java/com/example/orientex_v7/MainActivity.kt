@@ -208,11 +208,13 @@ class MainActivity : AppCompatActivity() {
             Log.i("AUTHCHECK", user.email.toString())
             val email = user.email.toString()
             val name = user.displayName.toString()
-            userQuery(name, email)
+            GlobalScope.launch {
+                userQuery(name, email).await()
+            }
         }
     }
 
-    fun userQuery(name: String , email: String) {
+     private fun userQuery(name: String , email: String) = GlobalScope.async {
 
         Log.i("AUTHCHECK-exists", "1. $email")
 
@@ -229,7 +231,7 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    fun addUser(name :String, email: String) {
+    private fun addUser(name :String, email: String) {
 
         val userData = hashMapOf(
             "ID" to email,
