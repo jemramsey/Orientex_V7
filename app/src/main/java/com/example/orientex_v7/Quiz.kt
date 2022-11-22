@@ -27,7 +27,7 @@ class Quiz : AppCompatActivity() {
         when(item.itemId) {
             R.id.navigation_quests -> {
                 val intent = Intent(this@Quiz, QuestList::class.java)
-                intent.putExtra("currentQuest", CurrentQuest.currQuest)
+                intent.putExtra("currentQuest", CurrentQuest.getCurrentQuest())
                 startActivity(intent)
             }
             R.id.navigation_profile -> startActivity(Intent(this@Quiz, Profile::class.java))

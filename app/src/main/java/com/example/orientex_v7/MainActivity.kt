@@ -158,45 +158,14 @@ class MainActivity : AppCompatActivity() {
         else { return null }
     }
 
-    private fun updateUi(email : String) {
-//        Log.i("AUTHCHECK", "$token")
-//
-//
-//        val firebaseCredential = GoogleAuthProvider.getCredential(token, null)
-//        auth.signInWithCredential(firebaseCredential)
-//        val user = auth.currentUser
-//        if (user != null) {
-//            Log.i("AUTHCHECK", user.email.toString())
-//            val email = user.email.toString()
-//            val name = user.displayName.toString()
+    private fun updateUi(email : String, id : String, currentQuest: Int) {
+        val intent = Intent(this@MainActivity, CurrentQuest::class.java)
+        intent.putExtra("User", email)
+        intent.putExtra("ID", id)
+        intent.putExtra("CurrentQuest", currentQuest)
 
-//            val userData = hashMapOf(
-//                "ID" to email,
-//                "Name" to name,
-//                "Email" to email,
-//                "Quest Completed" to 0
-//            )
-
-//            Log.i("AUTHCHECK-Email", email)
-//            Log.i("AUTHCHECK-Name", name)
-
-//            GlobalScope.launch(Dispatchers.IO) {
-//                val answer1 = async {query(email)}
-//                val answer2 = async {db.collection("Users")
-//                    .add(userData)
-//                    .addOnSuccessListener { documentReference ->
-//                        Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-//                    }
-//                    .addOnFailureListener { e ->
-//                        Log.w(TAG, "Error adding document", e)
-//                    }}
-//            }
-
-            val intent = Intent(this@MainActivity, CurrentQuest::class.java)
-            intent.putExtra("User", email)
-
-            startActivity(intent)
-        }
+        startActivity(intent)
+    }
 
     private fun authenticateWithFirebase(token: String?) {
         Log.i("AUTHCHECK", "$token")
@@ -217,26 +186,33 @@ class MainActivity : AppCompatActivity() {
 
      private fun userQuery(name: String , email: String) = GlobalScope.async {
 
-        getFbUserId(email);
-        Log.i("AUTHCHECK-exists", "1. $email")
+         var id = "N/A"
+         var currQuest = 0
 
-        db.collection("Users")
+         db.collection("Users")
             .whereEqualTo("Email", email)
             .get()
             .addOnSuccessListener { result ->
                 Log.i("AUTHCHECK-exists", result.documents.toString())
                 if(result.documents.isEmpty())
                 {
-                    addUser(name, email)
+                    id = addUser(name, email)
                 }
-                updateUi(email)
+                else {
+                    id = result.documents[0].id
+                    val questCompleted = result.documents[0].data?.get("Quest Completed").toString().toInt()
+                    if(questCompleted > 0) { currQuest = questCompleted + 1 }
+                }
+                updateUi(email, id, currQuest)
             }
             .addOnFailureListener { result ->
                 Log.i("AUTHCHECK-exists", "Cannot query DB")
             }
     }
 
-    private fun addUser(name :String, email: String) {
+    private fun addUser(name :String, email: String): String {
+
+        var id = "N/A"
 
         val userData = hashMapOf(
             "ID" to email,
@@ -249,11 +225,14 @@ class MainActivity : AppCompatActivity() {
             .add(userData)
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                id = documentReference.id
 //                updateUi(email)
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error adding document", e)
             }
+
+        return id
     }
 
     //TODO query and update Quests Completed in DB

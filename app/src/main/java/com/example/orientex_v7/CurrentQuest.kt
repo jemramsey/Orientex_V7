@@ -12,24 +12,33 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseUser
+import kotlin.properties.Delegates
 
 class CurrentQuest : AppCompatActivity() {
     companion object {
-        var currQuest = 0
+        private var currQuest = 0
+        fun getCurrentQuest(): Int { return currQuest }
+
+        //user's ID (to grab during database calls)
+        private lateinit var currentUserID: String
+        fun getUserID(): String { return currentUserID }
 
         //this is the email of the user
-        private lateinit var currentUser: String
-        fun getUser(): String { return currentUser }
+        private lateinit var currentUserEmail: String
+        fun getUserEmail(): String { return currentUserEmail }
     }
 
-    //private var currQuest = 0
     private lateinit var qrCode: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        currentUser = intent.getStringExtra("User").toString()
+        currentUserEmail = intent.getStringExtra("User").toString()
         qrCode = intent.getStringExtra("QRCode").toString()
+        currentUserID = intent.getStringExtra("ID").toString()
+        currQuest = intent.getIntExtra("CurrentQuest", 0)
+
+        Log.i("CurrentQuest-Found", currQuest.toString())
 
         setContentView(R.layout.activity_current_quest)
 
@@ -59,6 +68,10 @@ class CurrentQuest : AppCompatActivity() {
             //startActivityForResult(Intent(this@CurrentQuest, QR_Scanner::class.java))
         }
 
+    }
+
+    private fun updateCurrQuest() {
+        
     }
 
     private fun nextQuest() {

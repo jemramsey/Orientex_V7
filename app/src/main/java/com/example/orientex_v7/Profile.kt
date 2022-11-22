@@ -10,8 +10,8 @@ import android.widget.TextView
 
 class Profile : AppCompatActivity() {
 
-    private var email: String = CurrentQuest.getUser()
-    private var completedQuests: Int = 0
+    private var email: String = CurrentQuest.getUserEmail()
+    private var completedQuests: Int = CurrentQuest.getCurrentQuest() - 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +42,7 @@ class Profile : AppCompatActivity() {
             R.id.navigation_home -> startActivity(Intent(this@Profile, CurrentQuest::class.java))
             R.id.navigation_quests -> {
                 val intent = Intent(this@Profile, QuestList::class.java)
-                intent.putExtra("currentQuest", CurrentQuest.currQuest)
+                intent.putExtra("currentQuest", CurrentQuest.getCurrentQuest())
                 startActivity(intent)
             }
         }
