@@ -52,13 +52,13 @@ class MainActivity : AppCompatActivity() {
                     // with your backend.
                     val msg = "idToken: $idToken"
                     authenticateWithFirebase(idToken)
-                    Snackbar.make(binding.root, msg, Snackbar.LENGTH_INDEFINITE).show()
+//                    Snackbar.make(binding.root, msg, Snackbar.LENGTH_INDEFINITE).show()
                    // Log.d("one tap", msg)
                 }
                 else -> {
                     // Shouldn't happen.
                     Log.d("one tap", "No ID token!")
-                    Snackbar.make(binding.root, "No ID token!", Snackbar.LENGTH_INDEFINITE).show()
+//                    Snackbar.make(binding.root, "No ID token!", Snackbar.LENGTH_INDEFINITE).show()
                 }
             }
         } catch (e: ApiException) {
@@ -66,18 +66,18 @@ class MainActivity : AppCompatActivity() {
                 CommonStatusCodes.CANCELED -> {
                     Log.d("one tap", "One-tap dialog was closed.")
                     // Don't re-prompt the user.
-                    Snackbar.make(binding.root, "One-tap dialog was closed.", Snackbar.LENGTH_INDEFINITE).show()
+//                    Snackbar.make(binding.root, "One-tap dialog was closed.", Snackbar.LENGTH_INDEFINITE).show()
                 }
                 CommonStatusCodes.NETWORK_ERROR -> {
                     Log.d("one tap", "One-tap encountered a network error.")
                     // Try again or just ignore.
-                    Snackbar.make(binding.root, "One-tap encountered a network error.", Snackbar.LENGTH_INDEFINITE).show()
+//                    Snackbar.make(binding.root, "One-tap encountered a network error.", Snackbar.LENGTH_INDEFINITE).show()
                 }
                 else -> {
                     Log.d("one tap", "Couldn't get credential from result." +
                             " (${e.localizedMessage})")
-                    Snackbar.make(binding.root, "Couldn't get credential from result.\" +\n" +
-                            " (${e.localizedMessage})", Snackbar.LENGTH_INDEFINITE).show()
+//                    Snackbar.make(binding.root, "Couldn't get credential from result.\" +\n" +
+//                            " (${e.localizedMessage})", Snackbar.LENGTH_INDEFINITE).show()
                 }
             }
         }
