@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     val db = Firebase.firestore
 
-       private val oneTapResult = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()){ result ->
+    private val oneTapResult = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()){ result ->
         try {
             val credential = oneTapClient?.getSignInCredentialFromIntent(result.data)
             val idToken = credential?.googleIdToken
@@ -160,9 +160,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateUi(email : String, id : String, currentQuest: Int) {
         val intent = Intent(this@MainActivity, CurrentQuest::class.java)
-        intent.putExtra("User", email)
+        intent.putExtra("Email", email)
         intent.putExtra("ID", id)
         intent.putExtra("CurrentQuest", currentQuest)
+
+        Log.i("UpdateUI", "User's Info: $email, $id, $currentQuest")
 
         startActivity(intent)
     }
@@ -235,11 +237,21 @@ class MainActivity : AppCompatActivity() {
         return id
     }
 
-    //TODO query and update Quests Completed in DB
-    private fun updateQuestsCompleted(currentQuest : Int, email : String) = GlobalScope.async {
+    fun updateQuestsCompleted(currentQuest : Int, id : String) {
         db.collection("Users")
-            .document(email)
+            .document(id)
             .update("Quest Completed", currentQuest)
+    }
+
+    fun getQuestCompleted(id: String) = GlobalScope.async {
+        //var questCompleted = 0
+
+        db.collection("Users")
+            .document(id)
+            .get()
+            .addOnSuccessListener {
+                it.data?.get("Quest Completed").toString().toInt()
+            }
     }
 
     private fun queryQuestsCompleted(user: String) = GlobalScope.async {
@@ -262,7 +274,7 @@ class MainActivity : AppCompatActivity() {
             .addOnSuccessListener { result ->
                 for (document in result)
                     DocId = document.id.toString()
-                    Log.d("USER", "$DocId")
+                   // Log.d("USER", "$DocId")
             }
         return DocId
     }

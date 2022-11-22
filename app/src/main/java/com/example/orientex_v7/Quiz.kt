@@ -24,6 +24,8 @@ class Quiz : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        //TODO: Setup navigation to the others
         when(item.itemId) {
             R.id.navigation_quests -> {
                 val intent = Intent(this@Quiz, QuestList::class.java)

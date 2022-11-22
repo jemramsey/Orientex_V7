@@ -14,21 +14,34 @@ class QuestList : AppCompatActivity() {
     //size based on # of quests available
     private val size = 5
     private var quests = BooleanArray(size)
+    private lateinit var email: String
+    private var currentQuest = 0
+    private lateinit var id: String
+    //private var completedQuests = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quest_list)
 
-        //TODO: pull from database what is and isn't completed
+        email = intent.getStringExtra("Email").toString()
+        currentQuest = intent.getIntExtra("CurrentQuest", 0)
+        id = intent.getStringExtra("ID").toString()
 
-        val curQuest = intent.getIntExtra("currentQuest", 0)
-        //currentUser = intent.getStringExtra("User").toString()
-        if(curQuest < 1) {
+        for (i in 0 until size) { quests[i] = i < currentQuest }
+/*
+        //if there isn't any completed quests
+        if(currentQuest < 1) {
             for (i in 0 until size) { quests[i] = false }
             Log.d("QUESTSETTER", quests.toString())
         }
-
+        else {
+            when(currentQuest) {
+                0 -> for (i in 0 until size) { quests[i] = false }
+                1 -> for (i in 0 until size) { quests[i] = i < 1 }
+            }
+        }
+*/
         for(i in 0 until size) { updateImage(i) }
     }
 
@@ -58,8 +71,20 @@ class QuestList : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         when(item.itemId) {
-            R.id.navigation_home -> startActivity(Intent(this@QuestList, CurrentQuest::class.java))
-            R.id.navigation_profile -> startActivity(Intent(this@QuestList, Profile::class.java))
+            R.id.navigation_home -> {
+                val intent = Intent(this@QuestList, CurrentQuest::class.java)
+                intent.putExtra("Email", email)
+                intent.putExtra("ID", id)
+                intent.putExtra("CurrentQuest", currentQuest)
+                startActivity(intent)
+            }
+            R.id.navigation_profile -> {
+                val intent = Intent(this@QuestList, Profile::class.java)
+                intent.putExtra("Email", email)
+                intent.putExtra("ID", id)
+                intent.putExtra("CurrentQuest", currentQuest)
+                startActivity(intent)
+            }
         }
 
         return when (item.itemId) {

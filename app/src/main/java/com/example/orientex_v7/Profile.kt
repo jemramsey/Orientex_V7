@@ -10,14 +10,17 @@ import android.widget.TextView
 
 class Profile : AppCompatActivity() {
 
-    private var email: String = CurrentQuest.getUserEmail()
-    private var completedQuests: Int = CurrentQuest.getCurrentQuest() - 1
+    private lateinit var email: String
+    private lateinit var id: String
+    private var currentQuest: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
-        //TODO: Set completed quests via database grab of the # the user has finished
+        email = intent.getStringExtra("Email").toString()
+        currentQuest = intent.getIntExtra("CurrentQuest", 0).toString().toInt()
+        id = intent.getStringExtra("ID").toString()
 
         val username = findViewById<TextView>(R.id.emailText)
         username.text = email
@@ -26,7 +29,7 @@ class Profile : AppCompatActivity() {
         pic.setImageResource(R.drawable.uwf_vert_logo)
 
         val count = findViewById<TextView>(R.id.completedScore)
-        count.text = completedQuests.toString()
+        count.text = currentQuest.toString()
 
     }
 
@@ -39,10 +42,18 @@ class Profile : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.navigation_home -> startActivity(Intent(this@Profile, CurrentQuest::class.java))
+            R.id.navigation_home -> {
+                val intent = Intent(this@Profile, CurrentQuest::class.java)
+                intent.putExtra("Email", email)
+                intent.putExtra("ID", id)
+                intent.putExtra("CurrentQuest", currentQuest)
+                startActivity(intent)
+            }
             R.id.navigation_quests -> {
                 val intent = Intent(this@Profile, QuestList::class.java)
-                intent.putExtra("currentQuest", CurrentQuest.getCurrentQuest())
+                intent.putExtra("Email", email)
+                intent.putExtra("ID", id)
+                intent.putExtra("CurrentQuest", currentQuest)
                 startActivity(intent)
             }
         }

@@ -19,9 +19,17 @@ class QRScanner : AppCompatActivity() {
     private lateinit var codescanner : CodeScanner
     private var code = "NO_CODE"
 
+    private var currQuest = 0
+    private lateinit var email: String
+    private lateinit var id: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.qr_scanner)
+
+        currQuest = intent.getIntExtra("CurrentQuest", 0)
+        email = intent.getStringExtra("Email").toString()
+        id = intent.getStringExtra("ID").toString()
 
         if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), 123)
@@ -50,6 +58,9 @@ class QRScanner : AppCompatActivity() {
 
                 val intent = Intent(this@QRScanner, CurrentQuest::class.java)
                 intent.putExtra("QRCode", code)
+                intent.putExtra("Email", email)
+                intent.putExtra("ID", id)
+                intent.putExtra("CurrentQuest", currQuest)
                 startActivity(intent)
             }
         }

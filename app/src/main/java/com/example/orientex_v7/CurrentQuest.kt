@@ -11,29 +11,26 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.isVisible
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
 class CurrentQuest : AppCompatActivity() {
     companion object {
         private var currQuest = 0
         fun getCurrentQuest(): Int { return currQuest }
-
-        //user's ID (to grab during database calls)
-        private lateinit var currentUserID: String
-        fun getUserID(): String { return currentUserID }
-
-        //this is the email of the user
-        private lateinit var currentUserEmail: String
-        fun getUserEmail(): String { return currentUserEmail }
-    }
+}
 
     private lateinit var qrCode: String
+    private lateinit var currentUserID: String
+    private lateinit var currentUserEmail: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        currentUserEmail = intent.getStringExtra("User").toString()
+        currentUserEmail = intent.getStringExtra("Email").toString()
         qrCode = intent.getStringExtra("QRCode").toString()
         currentUserID = intent.getStringExtra("ID").toString()
         currQuest = intent.getIntExtra("CurrentQuest", 0)
@@ -42,18 +39,12 @@ class CurrentQuest : AppCompatActivity() {
 
         setContentView(R.layout.activity_current_quest)
 
-        //TODO: set to user's current quest via database (using currentUser)
-        //currQuest = 0
+        updateUI()
 
         //when launched, if current quest is 2 or 3, set currQuest-- & call nextQuest()
         //if code is not "NO_CODE", check that it's the right code, then call nextQuest()
-        if(currQuest == 2 || currQuest == 3) {
-            currQuest--
+        if((currQuest == 2 || currQuest == 3) && (qrCode != "NO_CODE" && checkCode(qrCode))) {
             nextQuest()
-
-            if(qrCode != "NO_CODE" && checkCode(qrCode)) {
-                nextQuest()
-            }
         }
 
         val questButton = findViewById<Button>(R.id.questButton)
@@ -70,13 +61,18 @@ class CurrentQuest : AppCompatActivity() {
 
     }
 
-    private fun updateCurrQuest() {
-        
-    }
-
     private fun nextQuest() {
         currQuest++
 
+        //Log.i("UpdateUI", "Current Quest: $currQuest")
+
+        val main = MainActivity()
+        main.updateQuestsCompleted(currQuest, currentUserID)
+
+        updateUI()
+    }
+
+    private fun updateUI() {
         //set the info in the layout to be what it is: title, description, image
         val title = findViewById<TextView>(R.id.questTitle)
         val image = findViewById<ImageView>(R.id.questImage)
@@ -108,17 +104,21 @@ class CurrentQuest : AppCompatActivity() {
                 title.text = getString(R.string.congratsTitle)
                 //image.setImageResource(android.R.drawable.) //set this to some sort of celebratory picture
                 desc.text = getString(R.string.congratsDesc)
+                val button = findViewById<Button>(R.id.questButton)
+                button.isVisible = false
             }
         }
-
     }
 
-    private fun launchScanner() { startActivity(Intent(this@CurrentQuest, QRScanner::class.java)) }
+    private fun launchScanner() {
+        val intent = Intent(this@CurrentQuest, QRScanner::class.java)
+        intent.putExtra("User", currentUserEmail)
+        intent.putExtra("ID", currentUserID)
+        intent.putExtra("CurrentQuest", currQuest)
+        startActivity(intent)
+    }
 
     private fun checkCode(info: String): Boolean {
-        //get the info from the QR Scanner
-        //val qr = QRScanner()
-        //val info = qr.getCode()
 
         //check off that the info is right (right qr code)
         var correctCode = false
@@ -129,6 +129,8 @@ class CurrentQuest : AppCompatActivity() {
             }
             "HMCSE-349" -> {if(currQuest == 3) { correctCode = true }}
         }
+
+        Log.i("CodeCheck", "Code: $correctCode, Scanned: $info")
 
         return correctCode
     }
@@ -143,10 +145,18 @@ class CurrentQuest : AppCompatActivity() {
         when(item.itemId) {
             R.id.navigation_quests -> {
                 val intent = Intent(this@CurrentQuest, QuestList::class.java)
-                intent.putExtra("currentQuest", currQuest)
+                intent.putExtra("Email", currentUserEmail)
+                intent.putExtra("ID", currentUserID)
+                intent.putExtra("CurrentQuest", currQuest)
                 startActivity(intent)
             }
-            R.id.navigation_profile -> startActivity(Intent(this@CurrentQuest, Profile::class.java))
+            R.id.navigation_profile -> {
+                val intent = Intent(this@CurrentQuest, Profile::class.java)
+                intent.putExtra("Email", currentUserEmail)
+                intent.putExtra("ID", currentUserID)
+                intent.putExtra("CurrentQuest", currQuest)
+                startActivity(intent)
+            }
         }
 
         return when (item.itemId) {
