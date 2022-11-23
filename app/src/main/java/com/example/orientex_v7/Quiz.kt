@@ -32,6 +32,11 @@ class Quiz : AppCompatActivity() {
     private var score: Double = 0.0
     private val passingScore: Double = 100.0
     private val totalQs: Int = 3
+    private var passedQuiz = false
+
+    private lateinit var group1: RadioGroup
+    private lateinit var group2: RadioGroup
+    private lateinit var group3: RadioGroup
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +62,10 @@ class Quiz : AppCompatActivity() {
         setAnswer(1,"Fourth")
         setAnswer(2,"349")
 
+        group1 = findViewById<RadioGroup>(R.id.questionGroup1)
+        group2 = findViewById<RadioGroup>(R.id.questionGroup2)
+        group3 = findViewById<RadioGroup>(R.id.questionGroup3)
+
         /*
         GlobalScope.launch {
             runBlocking { getAnswers().await() }
@@ -67,10 +76,6 @@ class Quiz : AppCompatActivity() {
 
         score = 0.0
 
-        val group1 = findViewById<RadioGroup>(R.id.questionGroup1)
-        val group2 = findViewById<RadioGroup>(R.id.questionGroup2)
-        val group3 = findViewById<RadioGroup>(R.id.questionGroup3)
-
         val selected1 = findViewById<RadioButton>(group1.checkedRadioButtonId)
         val selected2 = findViewById<RadioButton>(group2.checkedRadioButtonId)
         val selected3 = findViewById<RadioButton>(group3.checkedRadioButtonId)
@@ -78,9 +83,6 @@ class Quiz : AppCompatActivity() {
         if(checkAnswer(0, selected1.text as String)) { score += 100.0/totalQs }
         if(checkAnswer(1, selected2.text as String)) { score += 100.0/totalQs }
         if(checkAnswer(2, selected3.text as String)) { score += 100.0/totalQs }
-
-        //val scoreString = String.format("%.2f", score)
-        //val message = String.format("%.2f", "You scored: $score,\nScore Needed: $passingScore")
 
         /*
         Snackbar.make(findViewById(R.id.quizButton), scoreString, Snackbar.LENGTH_INDEFINITE)
@@ -91,23 +93,23 @@ class Quiz : AppCompatActivity() {
         */
         Log.i("AnswerChecked", "Selected answers: ${selected1.text}, ${selected2.text}, ${selected3.text}\nScore: $score")
 
-        if(score < passingScore) {
+        passedQuiz = score >= passingScore
+
+        if(!passedQuiz) {
             selected1.isChecked = false
             selected2.isChecked = false
             selected3.isChecked = false
-
         }
-        else {
-            Log.i("AnswerC", "Launching?")
+        else { launchAct() }
+    }
 
-            val intent = Intent(this@Quiz, CurrentQuest::class.java)
-            intent.putExtra("Email", email)
-            intent.putExtra("ID", id)
-            intent.putExtra("CurrentQuest", currentQuest)
-            intent.putExtra("Passed", true)
-            startActivity(intent)
-        }
-
+    private fun launchAct() {
+        val intent = Intent(this@Quiz, CurrentQuest::class.java)
+        intent.putExtra("Email", email)
+        intent.putExtra("ID", id)
+        intent.putExtra("CurrentQuest", currentQuest)
+        intent.putExtra("Passed", true)
+        startActivity(intent)
     }
 
     private fun setAnswer(index: Int, ans: String) {

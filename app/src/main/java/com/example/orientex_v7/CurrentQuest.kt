@@ -3,19 +3,14 @@ package com.example.orientex_v7
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Layout
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.view.isVisible
-import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlin.properties.Delegates
+
 
 class CurrentQuest : AppCompatActivity() {
     companion object {
@@ -41,7 +36,7 @@ class CurrentQuest : AppCompatActivity() {
 
         setContentView(R.layout.activity_current_quest)
 
-        updateUI()
+        if(passedQuiz) { nextQuest() }
 
         //when launched, if current quest is 2 or 3, set currQuest-- & call nextQuest()
         //if code is not "NO_CODE", check that it's the right code, then call nextQuest()
@@ -50,7 +45,8 @@ class CurrentQuest : AppCompatActivity() {
         }
 
         Log.i("CurrentQuest-F", "Current Quest: $currQuest, Passed: $passedQuiz")
-        if(currQuest == 4 && passedQuiz) { currQuest++; updateUI() }
+
+        updateUI()
 
         val questButton = findViewById<Button>(R.id.questButton)
         questButton.setOnClickListener {
