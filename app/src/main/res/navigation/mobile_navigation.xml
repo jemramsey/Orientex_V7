@@ -3,23 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/act_nav_home">
 
-    <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.example.orientex_v7.ui.home.HomeFragment"
+    <activity
+        android:id="@+id/act_nav_home"
+        android:name="com.example.orientex_v7.CurrentQuest"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
-
-    <fragment
-        android:id="@+id/navigation_quests"
-        android:name="com.example.orientex_v7.ui.quests.QuestsFragment"
-        android:label="@string/title_quests"
-        tools:layout="@layout/fragment_quests" />
-
-    <fragment
-        android:id="@+id/navigation_profile"
-        android:name="com.example.orientex_v7.ui.profile.ProfileFragment"
-        android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/activity_current_quest"/>
 </navigation>

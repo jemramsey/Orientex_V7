@@ -1,5 +1,6 @@
 package com.example.orientex_v7
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.IntentSender
 import androidx.appcompat.app.AppCompatActivity
@@ -13,12 +14,16 @@ import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthCredential
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private var signUpRequest: BeginSignInRequest? = null
     private var signInRequest: BeginSignInRequest? = null
     private lateinit var auth: FirebaseAuth
+    val db = Firebase.firestore
 
     private val oneTapResult = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()){ result ->
         try {
@@ -39,14 +45,14 @@ class MainActivity : AppCompatActivity() {
                     // Got an ID token from Google. Use it to authenticate
                     // with your backend.
                     val msg = "idToken: $idToken"
-                    updateUi(idToken)
-                    Snackbar.make(binding.root, msg, Snackbar.LENGTH_INDEFINITE).show()
+                    authenticateWithFirebase(idToken)
+//                    Snackbar.make(binding.root, msg, Snackbar.LENGTH_INDEFINITE).show()
                    // Log.d("one tap", msg)
                 }
                 else -> {
                     // Shouldn't happen.
                     Log.d("one tap", "No ID token!")
-                    Snackbar.make(binding.root, "No ID token!", Snackbar.LENGTH_INDEFINITE).show()
+//                    Snackbar.make(binding.root, "No ID token!", Snackbar.LENGTH_INDEFINITE).show()
                 }
             }
         } catch (e: ApiException) {
@@ -54,18 +60,18 @@ class MainActivity : AppCompatActivity() {
                 CommonStatusCodes.CANCELED -> {
                     Log.d("one tap", "One-tap dialog was closed.")
                     // Don't re-prompt the user.
-                    Snackbar.make(binding.root, "One-tap dialog was closed.", Snackbar.LENGTH_INDEFINITE).show()
+//                    Snackbar.make(binding.root, "One-tap dialog was closed.", Snackbar.LENGTH_INDEFINITE).show()
                 }
                 CommonStatusCodes.NETWORK_ERROR -> {
                     Log.d("one tap", "One-tap encountered a network error.")
                     // Try again or just ignore.
-                    Snackbar.make(binding.root, "One-tap encountered a network error.", Snackbar.LENGTH_INDEFINITE).show()
+//                    Snackbar.make(binding.root, "One-tap encountered a network error.", Snackbar.LENGTH_INDEFINITE).show()
                 }
                 else -> {
                     Log.d("one tap", "Couldn't get credential from result." +
                             " (${e.localizedMessage})")
-                    Snackbar.make(binding.root, "Couldn't get credential from result.\" +\n" +
-                            " (${e.localizedMessage})", Snackbar.LENGTH_INDEFINITE).show()
+//                    Snackbar.make(binding.root, "Couldn't get credential from result.\" +\n" +
+//                            " (${e.localizedMessage})", Snackbar.LENGTH_INDEFINITE).show()
                 }
             }
         }
@@ -140,16 +146,135 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    private fun updateUi(token: String?) {
+    fun getUser(): FirebaseUser? {
+
+        if(auth.currentUser != null) {return auth.currentUser}
+        else { return null }
+    }
+
+    private fun updateUi(email : String, id : String, currentQuest: Int) {
+        val intent = Intent(this@MainActivity, CurrentQuest::class.java)
+        intent.putExtra("Email", email)
+        intent.putExtra("ID", id)
+        intent.putExtra("CurrentQuest", currentQuest)
+
+        Log.i("UpdateUI", "User's Info: $email, $id, $currentQuest")
+
+        startActivity(intent)
+    }
+
+    private fun authenticateWithFirebase(token: String?) {
         Log.i("AUTHCHECK", "$token")
+
 
         val firebaseCredential = GoogleAuthProvider.getCredential(token, null)
         auth.signInWithCredential(firebaseCredential)
         val user = auth.currentUser
-        Log.i("AUTHCHECK", user.toString())
-
-        startActivity(Intent(this@MainActivity, Logged_In_View::class.java))
+        if (user != null) {
+            Log.i("AUTHCHECK", user.email.toString())
+            val email = user.email.toString()
+            val name = user.displayName.toString()
+            GlobalScope.launch {
+                userQuery(name, email).await()
+            }
+        }
     }
 
+     private fun userQuery(name: String , email: String) = GlobalScope.async {
 
+         var id = "NA"
+         var currQuest = 0
+
+         db.collection("Users")
+            .whereEqualTo("Email", email)
+            .get()
+            .addOnSuccessListener { result ->
+                Log.i("AUTHCHECK-exists", result.documents.toString())
+                if(result.documents.isEmpty())
+                {
+                    id = addUser(name, email)
+                }
+                else {
+                    id = result.documents[0].id
+                    val questCompleted = result.documents[0].data?.get("Quest Completed").toString().toInt()
+                    if(questCompleted > 0) { currQuest = questCompleted + 1 }
+                }
+                updateUi(email, id, currQuest)
+            }
+            .addOnFailureListener { result ->
+                Log.i("AUTHCHECK-exists", "Cannot query DB")
+            }
+    }
+
+    private fun addUser(name :String, email: String): String {
+
+        var id = "NA"
+
+        val userData = hashMapOf(
+            "ID" to email,
+            "Name" to name,
+            "Email" to email,
+            "Quest Completed" to 0
+        )
+
+        db.collection("Users")
+            .add(userData)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                id = documentReference.id
+//                updateUi(email)
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
+
+        return id
+    }
+
+    fun updateQuestsCompleted(currentQuest : Int, id : String) {
+        db.collection("Users")
+            .document(id)
+            .update("Quest Completed", currentQuest)
+    }
+
+    fun getQuestCompleted(id: String) = GlobalScope.async {
+        //var questCompleted = 0
+
+        db.collection("Users")
+            .document(id)
+            .get()
+            .addOnSuccessListener {
+                it.data?.get("Quest Completed").toString().toInt()
+            }
+    }
+
+    private fun queryQuestsCompleted(user: String) = GlobalScope.async {
+        var questID = 0
+        db.collection("Users")
+            .whereEqualTo("Email", user)
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result)
+                    questID = document.get("Quest Completed") as Int
+                Log.d("USER", "$questID")
+            }
+    }
+
+    private fun getFbUserId(email: String) : String {
+        var DocId = ""
+        db.collection("Users")
+            .whereEqualTo("Email",  email)
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result)
+                    DocId = document.id.toString()
+                   // Log.d("USER", "$DocId")
+            }
+        return DocId
+    }
+
+    private fun test() {
+      var  mDatabase = db.collection("Users").get()
+
+    }
 }
