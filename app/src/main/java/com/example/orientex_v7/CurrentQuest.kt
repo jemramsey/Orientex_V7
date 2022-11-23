@@ -26,6 +26,7 @@ class CurrentQuest : AppCompatActivity() {
     private lateinit var qrCode: String
     private lateinit var currentUserID: String
     private lateinit var currentUserEmail: String
+    private var passedQuiz: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +35,7 @@ class CurrentQuest : AppCompatActivity() {
         qrCode = intent.getStringExtra("QRCode").toString()
         currentUserID = intent.getStringExtra("ID").toString()
         currQuest = intent.getIntExtra("CurrentQuest", 0)
+        passedQuiz = intent.getBooleanExtra("Passed", false)
 
         Log.i("CurrentQuest-Found", currQuest.toString())
 
@@ -47,14 +49,17 @@ class CurrentQuest : AppCompatActivity() {
             nextQuest()
         }
 
+        Log.i("CurrentQuest-F", "Current Quest: $currQuest, Passed: $passedQuiz")
+        if(currQuest == 4 && passedQuiz) { currQuest++; updateUI() }
+
         val questButton = findViewById<Button>(R.id.questButton)
         questButton.setOnClickListener {
             when(currQuest) {
                 0 -> nextQuest()
                 1 -> nextQuest()
-                2 -> launchScanner()
-                3 -> launchScanner()
-                4 -> nextQuest()
+                2 -> launchAct("QR")
+                3 -> launchAct("QR")
+                //4 -> nextQuest()
             }
             //startActivityForResult(Intent(this@CurrentQuest, QR_Scanner::class.java))
         }
@@ -64,7 +69,7 @@ class CurrentQuest : AppCompatActivity() {
     private fun nextQuest() {
         currQuest++
 
-        //Log.i("UpdateUI", "Current Quest: $currQuest")
+        Log.i("CurrentQuest-F", "Current Quest: $currQuest")
 
         val main = MainActivity()
         main.updateQuestsCompleted(currQuest, currentUserID)
@@ -99,8 +104,10 @@ class CurrentQuest : AppCompatActivity() {
                 image.setImageResource(R.drawable.office_tag)
                 desc.text = getString(R.string.quest3Desc)
             }
-            4 -> { startActivity(Intent(this@CurrentQuest, Quiz::class.java)) }
-            5 -> {
+            4 -> {
+                launchAct("Quiz")
+            }
+            else -> {
                 title.text = getString(R.string.congratsTitle)
                 //image.setImageResource(android.R.drawable.) //set this to some sort of celebratory picture
                 desc.text = getString(R.string.congratsDesc)
@@ -110,9 +117,13 @@ class CurrentQuest : AppCompatActivity() {
         }
     }
 
-    private fun launchScanner() {
-        val intent = Intent(this@CurrentQuest, QRScanner::class.java)
-        intent.putExtra("User", currentUserEmail)
+    private fun launchAct(act: String) {
+        val intent = when(act) {
+            "QR" -> Intent(this@CurrentQuest, QRScanner::class.java)
+            "Quiz" -> Intent(this@CurrentQuest, Quiz::class.java)
+            else -> {Intent(this@CurrentQuest, CurrentQuest::class.java)}
+        }
+        intent.putExtra("Email", currentUserEmail)
         intent.putExtra("ID", currentUserID)
         intent.putExtra("CurrentQuest", currQuest)
         startActivity(intent)
@@ -124,7 +135,7 @@ class CurrentQuest : AppCompatActivity() {
         var correctCode = false
         when(info) {
             "HMCSE-435" -> {
-                Toast.makeText(this, "Yay", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, "Yay", Toast.LENGTH_SHORT).show()
                 if(currQuest == 2) { correctCode = true }
             }
             "HMCSE-349" -> {if(currQuest == 3) { correctCode = true }}

@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.IntentSender
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.Settings.Global
 import com.example.orientex_v7.databinding.ActivityMainBinding
 import android.util.Log
 import androidx.activity.result.IntentSenderRequest
@@ -15,21 +14,16 @@ import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -188,7 +182,7 @@ class MainActivity : AppCompatActivity() {
 
      private fun userQuery(name: String , email: String) = GlobalScope.async {
 
-         var id = "N/A"
+         var id = "NA"
          var currQuest = 0
 
          db.collection("Users")
@@ -214,7 +208,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun addUser(name :String, email: String): String {
 
-        var id = "N/A"
+        var id = "NA"
 
         val userData = hashMapOf(
             "ID" to email,

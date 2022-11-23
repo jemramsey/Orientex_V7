@@ -3,18 +3,141 @@ package com.example.orientex_v7
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.Button
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import android.widget.Toast
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.lang.String.format
+import java.lang.Thread.sleep
 
 class Quiz : AppCompatActivity() {
 
+    private lateinit var email: String
+    private lateinit var id: String
+    private var currentQuest: Int = 0
+    private val size = 3
+    private lateinit var answers: Array<String>
+    private val db = Firebase.firestore
+    private var score: Double = 0.0
+    private val passingScore: Double = 100.0
+    private val totalQs: Int = 3
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quiz)
 
-        //TODO: Setup the handling of & submission of the quiz
+        email = intent.getStringExtra("Email").toString()
+        currentQuest = intent.getIntExtra("CurrentQuest", 0).toString().toInt()
+        id = intent.getStringExtra("ID").toString()
+
+        answers = Array<String>(size) {"N/A"}
+        for(i in 0 until size) { answers[i] = "N/A" }
+
+        setup()
+
+        val button = findViewById<Button>(R.id.quizButton)
+        button.setOnClickListener { results() }
+
+        //Log.i("AnswerCheck", "Running checkAnswer: ${checkAnswer(2,"349")}")
     }
+
+    private fun setup() {
+        setAnswer(0,"Hal Marcus Computer Science and Engineering")
+        setAnswer(1,"Fourth")
+        setAnswer(2,"349")
+
+        /*
+        GlobalScope.launch {
+            runBlocking { getAnswers().await() }
+        }*/
+    }
+
+    private fun results() {
+
+        score = 0.0
+
+        val group1 = findViewById<RadioGroup>(R.id.questionGroup1)
+        val group2 = findViewById<RadioGroup>(R.id.questionGroup2)
+        val group3 = findViewById<RadioGroup>(R.id.questionGroup3)
+
+        val selected1 = findViewById<RadioButton>(group1.checkedRadioButtonId)
+        val selected2 = findViewById<RadioButton>(group2.checkedRadioButtonId)
+        val selected3 = findViewById<RadioButton>(group3.checkedRadioButtonId)
+
+        if(checkAnswer(0, selected1.text as String)) { score += 100.0/totalQs }
+        if(checkAnswer(1, selected2.text as String)) { score += 100.0/totalQs }
+        if(checkAnswer(2, selected3.text as String)) { score += 100.0/totalQs }
+
+        //val scoreString = String.format("%.2f", score)
+        //val message = String.format("%.2f", "You scored: $score,\nScore Needed: $passingScore")
+
+        /*
+        Snackbar.make(findViewById(R.id.quizButton), scoreString, Snackbar.LENGTH_INDEFINITE)
+            .setAction("Retry") {
+                // Responds to click on the action
+            }
+            .show()
+        */
+        Log.i("AnswerChecked", "Selected answers: ${selected1.text}, ${selected2.text}, ${selected3.text}\nScore: $score")
+
+        if(score < passingScore) {
+            selected1.isChecked = false
+            selected2.isChecked = false
+            selected3.isChecked = false
+
+        }
+        else {
+            Log.i("AnswerC", "Launching?")
+
+            val intent = Intent(this@Quiz, CurrentQuest::class.java)
+            intent.putExtra("Email", email)
+            intent.putExtra("ID", id)
+            intent.putExtra("CurrentQuest", currentQuest)
+            intent.putExtra("Passed", true)
+            startActivity(intent)
+        }
+
+    }
+
+    private fun setAnswer(index: Int, ans: String) {
+        answers[index] = ans
+        Log.i("AnswerCheck", "In setAnswer: ${answers[index]}")
+    }
+
+    private fun getAnswers() = GlobalScope.async {
+        db.collection("Quiz Answers")
+            .get()
+            .addOnSuccessListener { result ->
+                for(document in result) {
+                    //Log.i("AnswerCheck", "Document: $document")
+
+                    when(document.id) {
+                        "Q1" -> {
+                            //Log.i("AnswerCheck", "In Q1 -> ${document.get("answer").toString()}")
+                            setAnswer(0,document.get("answer").toString())
+                        }
+                        "Q2" -> { setAnswer(1,document.get("answer").toString()) }
+                        "Q3" -> { setAnswer(2,document.get("answer").toString()) }
+                    }
+                }
+            }
+            .addOnFailureListener {
+                Log.i("AnswerCheck", "You Reached Failure Listener")
+            }
+    }
+
+    private fun checkAnswer(index: Int, ans: String): Boolean { return answers[index] == ans }
 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -29,10 +152,18 @@ class Quiz : AppCompatActivity() {
         when(item.itemId) {
             R.id.navigation_quests -> {
                 val intent = Intent(this@Quiz, QuestList::class.java)
-                intent.putExtra("currentQuest", CurrentQuest.getCurrentQuest())
+                intent.putExtra("Email", email)
+                intent.putExtra("ID", id)
+                intent.putExtra("CurrentQuest", currentQuest)
                 startActivity(intent)
             }
-            R.id.navigation_profile -> startActivity(Intent(this@Quiz, Profile::class.java))
+            R.id.navigation_profile -> {
+                val intent = Intent(this@Quiz, Profile::class.java)
+                intent.putExtra("Email", email)
+                intent.putExtra("ID", id)
+                intent.putExtra("CurrentQuest", currentQuest)
+                startActivity(intent)
+            }
         }
 
         return when (item.itemId) {
