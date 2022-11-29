@@ -9,3 +9,4 @@ The /res folder within this directory contains all of the necessary xml files fo
 The /java/com/example/orientex_v7 directory within the aformentioned /app/src/main folder contains all of the source code files for the project.
 These are all self-describing source code files with the exception of MainActivity.kt. MainActivity.kt mostly handles the login section of the app and sends necessary
 data to other source code files.
+- The /Project_Documentation folder contains all of the final report and User Manual for our submission.
