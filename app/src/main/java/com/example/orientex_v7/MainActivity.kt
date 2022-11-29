@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     val db = Firebase.firestore
 
+
     private val oneTapResult = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()){ result ->
         try {
             val credential = oneTapClient?.getSignInCredentialFromIntent(result.data)
@@ -77,7 +78,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
@@ -112,6 +112,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
     private fun displaySignIn(){
         oneTapClient?.beginSignIn(signInRequest!!)
             ?.addOnSuccessListener(this) { result ->
@@ -146,12 +147,7 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    fun getUser(): FirebaseUser? {
-
-        if(auth.currentUser != null) {return auth.currentUser}
-        else { return null }
-    }
-
+    //launch the rest of the app after login
     private fun updateUi(email : String, id : String, currentQuest: Int) {
         val intent = Intent(this@MainActivity, CurrentQuest::class.java)
         intent.putExtra("Email", email)
@@ -180,7 +176,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-     private fun userQuery(name: String , email: String) = GlobalScope.async {
+    //searching for UID in database based on email
+    private fun userQuery(name: String , email: String) = GlobalScope.async {
 
          var id = "NA"
          var currQuest = 0
@@ -206,6 +203,7 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
+    //add user to database
     private fun addUser(name :String, email: String): String {
 
         var id = "NA"
@@ -231,35 +229,14 @@ class MainActivity : AppCompatActivity() {
         return id
     }
 
+    //increment user's quest count when the quest is completed
     fun updateQuestsCompleted(currentQuest : Int, id : String) {
         db.collection("Users")
             .document(id)
             .update("Quest Completed", currentQuest)
     }
 
-    fun getQuestCompleted(id: String) = GlobalScope.async {
-        //var questCompleted = 0
-
-        db.collection("Users")
-            .document(id)
-            .get()
-            .addOnSuccessListener {
-                it.data?.get("Quest Completed").toString().toInt()
-            }
-    }
-
-    private fun queryQuestsCompleted(user: String) = GlobalScope.async {
-        var questID = 0
-        db.collection("Users")
-            .whereEqualTo("Email", user)
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result)
-                    questID = document.get("Quest Completed") as Int
-                Log.d("USER", "$questID")
-            }
-    }
-
+    //retained for future development
     private fun getFbUserId(email: String) : String {
         var DocId = ""
         db.collection("Users")
@@ -273,8 +250,4 @@ class MainActivity : AppCompatActivity() {
         return DocId
     }
 
-    private fun test() {
-      var  mDatabase = db.collection("Users").get()
-
-    }
 }

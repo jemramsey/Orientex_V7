@@ -40,6 +40,8 @@ class QRScanner : AppCompatActivity() {
 
     fun getCode(): String? { return code }
 
+    //opens camera and attempts to scan QR code,
+    //if it's successful, it'll launch current quests with the code
     private fun startScanning() {
         val scannerView: CodeScannerView = findViewById(R.id.scanner_view)
         codescanner = CodeScanner(this, scannerView)

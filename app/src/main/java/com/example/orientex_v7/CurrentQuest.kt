@@ -62,6 +62,7 @@ class CurrentQuest : AppCompatActivity() {
 
     }
 
+    //update the current quest
     private fun nextQuest() {
         currQuest++
 
@@ -73,6 +74,7 @@ class CurrentQuest : AppCompatActivity() {
         updateUI()
     }
 
+    //change current quest's UI to match current quest
     private fun updateUI() {
         //set the info in the layout to be what it is: title, description, image
         val title = findViewById<TextView>(R.id.questTitle)
@@ -113,6 +115,7 @@ class CurrentQuest : AppCompatActivity() {
         }
     }
 
+    //launch either QR or Quiz
     private fun launchAct(act: String) {
         val intent = when(act) {
             "QR" -> Intent(this@CurrentQuest, QRScanner::class.java)
@@ -125,6 +128,7 @@ class CurrentQuest : AppCompatActivity() {
         startActivity(intent)
     }
 
+    //check QR code for the correct one
     private fun checkCode(info: String): Boolean {
 
         //check off that the info is right (right qr code)

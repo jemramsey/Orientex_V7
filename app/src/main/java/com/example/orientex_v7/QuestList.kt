@@ -45,6 +45,7 @@ class QuestList : AppCompatActivity() {
         for(i in 0 until size) { updateImage(i) }
     }
 
+    //update the checkbox images based on if it's completed or not
     private fun updateImage(quest: Int) {
         val id: Int = when (quest) {
             0 -> R.id.introCheck
