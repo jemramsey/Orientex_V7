@@ -72,6 +72,7 @@ class Quiz : AppCompatActivity() {
         }*/
     }
 
+    //scores & sees whether or not they pass
     private fun results() {
 
         score = 0.0
@@ -103,6 +104,7 @@ class Quiz : AppCompatActivity() {
         else { launchAct() }
     }
 
+    //launching current quest after passing
     private fun launchAct() {
         val intent = Intent(this@Quiz, CurrentQuest::class.java)
         intent.putExtra("Email", email)
@@ -112,11 +114,13 @@ class Quiz : AppCompatActivity() {
         startActivity(intent)
     }
 
+    //setting the array
     private fun setAnswer(index: Int, ans: String) {
         answers[index] = ans
         Log.i("AnswerCheck", "In setAnswer: ${answers[index]}")
     }
 
+    //future build: would have it pulling answers from database
     private fun getAnswers() = GlobalScope.async {
         db.collection("Quiz Answers")
             .get()
@@ -139,6 +143,7 @@ class Quiz : AppCompatActivity() {
             }
     }
 
+    //is the answer they picked correct?
     private fun checkAnswer(index: Int, ans: String): Boolean { return answers[index] == ans }
 
 
