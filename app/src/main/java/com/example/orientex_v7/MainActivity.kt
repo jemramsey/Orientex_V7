@@ -197,7 +197,7 @@ class MainActivity : AppCompatActivity() {
                 else {
                     id = result.documents[0].id
                     val questCompleted = result.documents[0].data?.get("Quest Completed").toString().toInt()
-                    if(questCompleted > 0) { currQuest = questCompleted + 1 }
+                    if(questCompleted > 0) { currQuest = questCompleted }
                 }
                 updateUi(email, id, currQuest)
             }

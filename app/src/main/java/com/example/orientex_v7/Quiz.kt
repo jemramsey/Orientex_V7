@@ -6,20 +6,14 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
-import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.lang.String.format
-import java.lang.Thread.sleep
 
 class Quiz : AppCompatActivity() {
 
@@ -29,8 +23,8 @@ class Quiz : AppCompatActivity() {
     private val size = 3
     private lateinit var answers: Array<String>
     private val db = Firebase.firestore
-    private var score: Double = 0.0
-    private val passingScore: Double = 100.0
+    private var score: Double = 0.00
+    private val passingScore: Double = 100.00
     private val totalQs: Int = 3
     private var passedQuiz = false
 
@@ -84,23 +78,31 @@ class Quiz : AppCompatActivity() {
         if(checkAnswer(1, selected2.text as String)) { score += 100.0/totalQs }
         if(checkAnswer(2, selected3.text as String)) { score += 100.0/totalQs }
 
-        /*
-        Snackbar.make(findViewById(R.id.quizButton), scoreString, Snackbar.LENGTH_INDEFINITE)
-            .setAction("Retry") {
-                // Responds to click on the action
-            }
-            .show()
-        */
         Log.i("AnswerChecked", "Selected answers: ${selected1.text}, ${selected2.text}, ${selected3.text}\nScore: $score")
+
+        val scoreStr = String.format("%.2f", score)
+        val passStr = String.format("%.2f", passingScore)
+        val message = "Passing Score: $passStr\nYour Score: $scoreStr"
+
+        Log.i("AnswerChecked", message)
 
         passedQuiz = score >= passingScore
 
         if(!passedQuiz) {
-            selected1.isChecked = false
-            selected2.isChecked = false
-            selected3.isChecked = false
+            Snackbar.make(findViewById(R.id.quizView), message, Snackbar.LENGTH_INDEFINITE)
+                .setAction("Retry") {
+                    selected1.isChecked = false
+                    selected2.isChecked = false
+                    selected3.isChecked = false
+                }
+                .show()
         }
-        else { launchAct() }
+        else {
+            Snackbar.make(findViewById(R.id.quizView), message, Snackbar.LENGTH_INDEFINITE)
+                .setAction("Continue") {  launchAct() }
+                .show()
+
+        }
     }
 
     private fun launchAct() {
